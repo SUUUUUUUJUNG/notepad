@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Notepad</title>
+</head>
+<body>
+<h1>Notepad</h1>
+
+<label for="title">Title:</label>
+<input type="text" id="title" />
+<br>
+
+<textarea id="note" rows="10" cols="30"></textarea>
+<br>
+
+<button onclick="saveNote()">Save Note</button>
+<button onclick="loadAllNotes()">Load All Notes</button>
+
+<h2>Saved Notes</h2>
+<ul id="notesList"></ul>
+
+<script>
+    function saveNote() {
+        if (localStorage.length >= 2) {
+            alert('You can only save up to 2 notes!');
+            return;
+        }
+
+        const title = document.getElementById('title').value;
+        const note = document.getElementById('note').value;
+
+        if (!title) {
+            alert('Please enter a title for your note.');
+            return;
+        }
+
+        localStorage.setItem(title, note);
+        alert('Note saved!');
+        loadAllNotes();
+    }
+
+    function loadAllNotes() {
+        const notesList = document.getElementById('notesList');
+        notesList.innerHTML = '';
+
+        for (let i = 0; i < localStorage.length; i++) {
+            const title = localStorage.key(i);
+            const note = localStorage.getItem(title);
+
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `${title}: ${note} <button onclick="deleteNote('${title}')">Delete</button>`;
+            notesList.appendChild(listItem);
+        }
+    }
+
+    function deleteNote(title) {
+        localStorage.removeItem(title);
+        alert(`Note "${title}" deleted!`);
+        loadAllNotes();  // 삭제 후 목록 다시 불러오기
+    }
+
+    window.onload = loadAllNotes;
+</script>
+</body>
+</html>
